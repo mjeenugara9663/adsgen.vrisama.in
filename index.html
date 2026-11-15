@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Video Ad Generator | Vrisama Ads</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Describe your product and get a short AI video ad. Early access preview from Vrisama Ads.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
+<style>
+  :root {
+    --ink: #ffffff; --muted: rgba(255,255,255,.66); --paper: #070A1C; --card: rgba(255,255,255,.045);
+    --line: rgba(255,255,255,.14); --accent: #7C5CFF; --accent-ink: #fff; --ok: #4CE5BB; --mint: #4CE5BB;
+    --display: "Bricolage Grotesque", "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --text: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--ink); font: 16px/1.5 var(--text); -webkit-font-smoothing: antialiased;
+    background-color: var(--paper);
+    background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 56px 56px; }
+  h1, .brand, dialog h2 { font-family: var(--display); }
+  select option { background: #0E1230; color: #fff; }
+  ::placeholder { color: rgba(255,255,255,.38); }
+  footer { max-width: 1120px; margin: 0 auto; padding: 0 24px 40px; color: var(--muted); font-size: 13px; display: flex; gap: 8px 20px; flex-wrap: wrap; justify-content: space-between; }
+  footer a { color: var(--ink); }
+  .tag { display: inline-block; padding: 3px 10px; border: 1px solid var(--mint); color: var(--mint); border-radius: 99px; font-size: 12px; font-weight: 600; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    max-width: 1120px; margin: 0 auto; padding: 20px 24px; }
+  .brand { font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
+  .brand span { color: var(--accent); }
+  .plan { font-size: 14px; color: var(--muted); text-align: right; }
+  .plan b { color: var(--ink); }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--muted); font: inherit;
+    font-size: 13px; text-decoration: underline; cursor: pointer; }
+  main { max-width: 1120px; margin: 0 auto; padding: 8px 24px 64px;
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 32px; align-items: start; }
+  h1 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.05; letter-spacing: -0.03em; margin: 12px 0 10px; }
+  .lede { color: var(--muted); margin: 0 0 24px; max-width: 46ch; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  label { display: block; font-size: 13px; font-weight: 650; margin: 14px 0 6px; }
+  label small { font-weight: 400; color: var(--muted); }
+  input, textarea, select { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px;
+    background: rgba(255,255,255,.06); color: var(--ink); font: inherit; }
+  textarea { resize: vertical; min-height: 76px; }
+  input:focus, textarea:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
+  .primary { width: 100%; margin-top: 20px; padding: 14px 18px; border: 0; border-radius: 12px;
+    background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 750; font-size: 16px; cursor: pointer; }
+  .primary:disabled { opacity: .55; cursor: progress; }
+  .meter { margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .meter .bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .meter .bar i { display: block; height: 100%; width: 0; background: var(--mint); }
+  .stage { position: sticky; top: 16px; }
+  .screen { background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 22px; padding: 12px; display: grid; place-items: center; min-height: 420px; }
+  .screen canvas, .screen video { display: block; max-width: 100%; max-height: 68vh; border-radius: 12px; background: #000; }
+  .empty { color: var(--muted); text-align: center; padding: 40px 24px; font-size: 15px; }
+  .status { min-height: 24px; margin: 14px 2px 0; font-size: 14px; color: var(--muted); }
+  .status.err { color: #ff9a8f; }
+  .status.ok { color: var(--ok); }
+  .progress { height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 8px; visibility: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); }
+  .download { display: none; margin-top: 14px; text-align: center; padding: 13px; border-radius: 12px;
+    background: var(--mint); color: #070A1C; font-weight: 700; text-decoration: none; }
+  .script { display: none; margin-top: 16px; font-size: 14px; }
+  .script dt { font-weight: 700; margin-top: 10px; }
+  .script dd { margin: 2px 0 0; color: var(--muted); }
+  .banner { display: none; max-width: 1072px; margin: 0 auto 8px; padding: 10px 14px; border-radius: 10px;
+    background: rgba(255,214,102,.1); border: 1px solid rgba(255,214,102,.45); color: #ffe7a8; font-size: 14px; }
+  dialog { background: #0E1230; color: var(--ink); border: 1px solid var(--line); border-radius: 16px; padding: 22px; max-width: 520px; width: calc(100% - 32px); }
+  dialog::backdrop { background: rgba(23, 19, 15, .45); }
+  dialog h2 { margin: 0 0 6px; font-size: 18px; }
+  dialog p { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+  .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+  .dialog-actions button { padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
+  .dialog-actions .save { background: var(--accent); color: #fff; border-color: var(--accent); }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } .stage { position: static; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="https://ads.vrisama.in/" style="color:inherit;text-decoration:none">Vrisama <span>Ads</span></a>
+  <div class="plan"><span class="tag">Early access preview</span><br>
+    <button class="linkbtn" id="openSettings" type="button">Connection settings</button></div>
+</header>
+
+<div class="banner" id="demoBanner"><b>Demo mode.</b> No n8n webhook is connected, so scenes are placeholders and there is no voiceover.
+  Open <i>Connection settings</i> and paste your webhook URL to generate real ads.</div>
+
+<main>
+  <section>
+    <h1>Describe the product. Get a video ad.</h1>
+    <p class="lede">Tell us what you sell and what the ad should achieve. We write the script, create the scenes and voiceover, and hand you a 10 or 15 second video with real motion.</p>
+
+    <form class="card" id="adForm" novalidate>
+      <label for="code" style="margin-top:0">Invite code <small>- early access is by invitation</small></label>
+      <input id="code" autocomplete="off" maxlength="60" placeholder="Enter the code you were given" required>
+
+      <label for="email">Your email <small>- used to track your 30 ads per month</small></label>
+      <input id="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+
+      <label for="product">Product name</label>
+      <input id="product" maxlength="120" placeholder="e.g. Brewly cold brew concentrate" required>
+
+      <label for="description">What is it? <small>- features, price, what makes it different</small></label>
+      <textarea id="description" maxlength="800" placeholder="Small-batch cold brew concentrate, 12 cups per bottle, no sugar, ships in 2 days."></textarea>
+
+      <label for="intention">Goal of this ad</label>
+      <textarea id="intention" maxlength="400" placeholder="Get first-time buyers to try the starter pack with 20% off this week." required></textarea>
+
+      <label for="audience">Who is it for? <small>- optional</small></label>
+      <input id="audience" maxlength="200" placeholder="Busy professionals, 25-40, who buy coffee daily">
+
+      <div class="row">
+        <div><label for="style">Look</label>
+          <select id="style"><option value="elegant">Elegant - serif titles, light end card</option><option value="bold">Bold - big captions, dark end card</option></select></div>
+        <div><label for="tone">Tone</label>
+          <select id="tone"><option>Energetic</option><option>Friendly</option><option>Premium</option><option>Playful</option><option>Calm</option><option>Bold</option></select></div>
+        <div><label for="duration">Length</label>
+          <select id="duration"><option value="15">15 seconds</option><option value="10">10 seconds</option></select></div>
+        <div><label for="aspect">Format</label>
+          <select id="aspect"><option value="9:16">Vertical 9:16</option><option value="16:9">Wide 16:9</option></select></div>
+      </div>
+
+      <button class="primary" id="go" type="submit">Create video ad</button>
+
+      <div class="meter" id="meter">
+        <span id="meterText">30 ads available this month</span>
+        <div class="bar"><i id="meterBar"></i></div>
+      </div>
+    </form>
+  </section>
+
+  <section class="stage">
+    <div class="screen" id="screen"><div class="empty" id="empty">Your ad will appear here.<br>Keep this tab open while it renders.</div></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <div class="progress" id="progress"><i id="progressBar"></i></div>
+    <a class="download" id="download" download>Download video</a>
+    <dl class="script" id="script"></dl>
+  </section>
+</main>
+
+<footer><span>&copy; Vrisama Ads &middot; Early access preview. Videos are AI-generated; review them before you publish.</span>
+  <span><a href="https://ads.vrisama.in/">ads.vrisama.in</a> &middot; <a href="https://ads.vrisama.in/privacy.html">Privacy</a></span></footer>
+
+<dialog id="settings">
+  <h2>Connection settings</h2>
+  <p>Paste the <b>Production URL</b> of the Webhook node from your n8n workflow. Leave it empty to stay in demo mode.</p>
+  <label for="hook">n8n webhook URL</label>
+  <input id="hook" type="url" placeholder="https://your-n8n.example.com/webhook/adspark-generate">
+  <div class="dialog-actions">
+    <button type="button" id="cancelSettings">Cancel</button>
+    <button type="button" class="save" id="saveSettings">Save</button>
+  </div>
+</dialog>
+
+<script>
+// ───────── SETTINGS ─────────
+// For your live site, paste the n8n Production webhook URL here so visitors never see the settings dialog.
+const N8N_WEBHOOK_URL = "https://manju.newgenagents.cloud/webhook/adspark-generate";
+const MONTHLY_LIMIT = 30;
+// ────────────────────────────
+
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} },
+};
+const hookUrl = () => N8N_WEBHOOK_URL || store.get("adspark.webhook") || "";
+const SIZES = { "9:16": [720, 1280], "1:1": [1080, 1080], "16:9": [1280, 720] };
+const ACCENT = "#7C5CFF";
+let audioCtx = null;
+let lastBlobUrl = null;
+
+function refreshMode() { $("demoBanner").style.display = hookUrl() ? "none" : "block"; }
+function setStatus(text, kind) { const s = $("status"); s.textContent = text; s.className = "status" + (kind ? " " + kind : ""); }
+function setProgress(p) {
+  $("progress").style.visibility = p == null ? "hidden" : "visible";
+  $("progressBar").style.width = Math.round((p || 0) * 100) + "%";
+}
+function showUsage(u) {
+  if (!u) return;
+  const left = Math.max(0, u.limit - u.used);
+  $("meterText").textContent = u.used + " of " + u.limit + " ads used this month - " + left + " left";
+  $("meterBar").style.width = Math.min(100, (u.used / u.limit) * 100) + "%";
+  store.set("adspark.usage", JSON.stringify(u));
+}
+
+// ───────── Getting the ad (n8n or demo) ─────────
+async function call(payload, ms) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ms);
+  let res;
+  try {
+    res = await fetch(hookUrl(), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: ctl.signal });
+  } catch (e) {
+    throw new Error(e.name === "AbortError" ? "The request timed out." : "Could not reach the ad service. Check that the n8n workflow is active (published).");
+  } finally { clearTimeout(timer); }
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (data && data.usage) showUsage(data.usage);
+  if (!res.ok || !data || !data.ok) throw new Error((data && (data.error || data.message)) || "The ad service returned an error (" + res.status + ").");
+  return data;
+}
+// Shrink a scene image before sending it back to guide the video clip.
+async function toJpeg(image) {
+  const el = await loadImage(image); if (!el) return image;
+  const k = Math.min(1, 1280 / Math.max(el.width, el.height));
+  const c = document.createElement("canvas"); c.width = Math.round(el.width * k); c.height = Math.round(el.height * k);
+  c.getContext("2d").drawImage(el, 0, 0, c.width, c.height);
+  return { mimeType: "image/jpeg", data: c.toDataURL("image/jpeg", 0.9).split(",")[1] };
+}
+// One ad = several short calls to n8n: script, then (in parallel) voiceover and, per scene, image then video clip.
+async function requestAd(input, note) {
+  if (!hookUrl()) return demoAd(input);
+  note("Writing the script...");
+  const first = await call(Object.assign({ action: "script" }, input), 120000);
+  const ad = first.ad, job = first.job, n = ad.scenes.length;
+  let images = 0, clips = 0;
+  const report = () => note(first.motion
+    ? "Creating scenes: " + images + " of " + n + " images and " + clips + " of " + n + " video clips ready. Clips can take a few minutes..."
+    : "Creating scenes: " + images + " of " + n + " ready...");
+  report();
+  const voice = call({ action: "voice", job }, 180000).then((d) => { ad.audio = d.audio; }).catch(() => { ad.audio = null; });
+  const scenes = ad.scenes.map(async (s, index) => {
+    try { s.image = (await call({ action: "image", job, index }, 180000)).image; images++; report(); } catch (e) { s.image = null; return; }
+    if (!first.motion) return;
+    try { s.video = (await call({ action: "clip", job, index, image: await toJpeg(s.image) }, 600000)).video; clips++; report(); }
+    catch (e) { s.video = null; ad.clipError = e.message; }
+  });
+  await Promise.all([voice].concat(scenes));
+  if (!ad.scenes.some((s) => s.image)) throw new Error("The scenes could not be created. Please try again.");
+  ad.missingClips = first.motion ? ad.scenes.filter((s) => !s.video).length : 0;
+  return ad;
+}
+
+function demoAd(input) {
+  const captions = ["Meet " + input.product, "Made for " + (input.audience || "people like you"), "Try it today"];
+  if (input.duration === 10) captions.splice(1, 1);
+  let u = { used: 0, limit: MONTHLY_LIMIT, month: new Date().toISOString().slice(0, 7) };
+  try { const s = JSON.parse(store.get("adspark.demoUsage")); if (s && s.month === u.month) u = s; } catch (e) {}
+  if (u.used >= u.limit) { showUsage(u); throw new Error("Monthly limit reached: " + u.used + " of " + u.limit + " ads used."); }
+  u.used += 1; store.set("adspark.demoUsage", JSON.stringify(u)); showUsage(u);
+  return {
+    product: input.product, headline: input.product, cta: "Shop now", duration: input.duration, aspect: input.aspect,
+    voiceover: "(Demo mode has no voiceover.) " + input.intention,
+    scenes: captions.map((caption) => ({ caption, image: null })), audio: null,
+  };
+}
+
+// ───────── Preparing assets ─────────
+function placeholderScene(i, w, h) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g = c.getContext("2d");
+  const hues = [14, 212, 158, 38];
+  const grad = g.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, "hsl(" + hues[i % 4] + " 70% 46%)");
+  grad.addColorStop(1, "hsl(" + ((hues[i % 4] + 40) % 360) + " 60% 18%)");
+  g.fillStyle = grad; g.fillRect(0, 0, w, h);
+  g.globalAlpha = 0.18; g.fillStyle = "#fff";
+  for (let k = 0; k < 5; k++) { g.beginPath(); g.arc(w * (0.15 + 0.2 * k), h * (0.25 + 0.12 * ((k * 3 + i) % 4)), w * (0.08 + 0.03 * k), 0, 7); g.fill(); }
+  return c;
+}
+function loadImage(img) {
+  return new Promise((resolve) => {
+    const el = new Image();
+    el.onload = () => resolve(el); el.onerror = () => resolve(null);
+    el.src = "data:" + img.mimeType + ";base64," + img.data;
+  });
+}
+function loadVideo(video) {
+  return new Promise((resolve) => {
+    let url = null;
+    try {
+      const bin = atob(video.data), bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      url = URL.createObjectURL(new Blob([bytes], { type: video.mimeType || "video/mp4" }));
+    } catch (e) { return resolve(null); }
+    const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.preload = "auto";
+    const timer = setTimeout(() => resolve(null), 20000);
+    v.onloadeddata = () => { clearTimeout(timer); resolve(v); };
+    v.onerror = () => { clearTimeout(timer); resolve(null); };
+    v.src = url; v.load();
+  });
+}
+// Start each clip when its scene begins and stop it shortly after the scene ends.
+function syncClips(ad, t) {
+  const sd = (ad.duration - endLength(ad)) / ad.scenes.length;
+  ad.scenes.forEach((s, i) => {
+    const v = s.el; if (!v || !v.play) return;
+    const on = t >= i * sd - 0.05 && t < (i + 1) * sd + 1;
+    if (on && v.paused && !v.ended) v.play().catch(() => {});
+    if (!on && !v.paused) v.pause();
+  });
+}
+async function decodeAudio(audio) {
+  if (!audio || !audio.data || !audioCtx) return null;
+  const bin = atob(audio.data);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const isWav = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46; // "RIFF"
+  try {
+    if (isWav || !/L16|pcm/i.test(audio.mimeType || "")) return await audioCtx.decodeAudioData(bytes.buffer.slice(0));
+  } catch (e) { if (isWav) return null; }
+  // Raw 16-bit little-endian mono PCM at 24 kHz (older Gemini TTS output).
+  const samples = Math.floor(bytes.length / 2);
+  const view = new DataView(bytes.buffer);
+  const buf = audioCtx.createBuffer(1, samples, 24000);
+  const ch = buf.getChannelData(0);
+  for (let i = 0; i < samples; i++) ch[i] = view.getInt16(i * 2, true) / 32768;
+  return buf;
+}
+
+// ───────── Drawing one frame ─────────
+const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+function wrap(g, text, maxW) {
+  const words = String(text || "").split(/\s+/).filter(Boolean); const lines = []; let line = "";
+  for (const w of words) { const t = line ? line + " " + w : w; if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+function drawCover(g, img, W, H, p, i, alpha) {
+  const clip = !!img.videoWidth, iw = img.videoWidth || img.width, ih = img.videoHeight || img.height;
+  const s = Math.max(W / iw, H / ih) * (clip ? 1 + 0.03 * p : 1.05 + 0.1 * p); // clips already move, so only a slight zoom
+  const dw = iw * s, dh = ih * s;
+  const dir = clip ? 0 : i % 2 ? 1 : -1;
+  const x = (W - dw) / 2 + dir * (p - 0.5) * W * 0.04, y = (H - dh) / 2 + (clip ? 0 : (0.5 - p) * H * 0.02);
+  g.globalAlpha = alpha; g.drawImage(img, x, y, dw, dh); g.globalAlpha = 1;
+}
+function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+const SANS = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const SERIF = '"Cormorant Garamond", Georgia, "Times New Roman", serif';
+const endLength = (ad) => (ad.duration >= 15 ? 3.4 : 2.8); // seconds of branded end card
+
+// Split the narration into short subtitle lines timed across the spoken audio.
+function buildSubs(text, start, end) {
+  const words = String(text || "").split(/\s+/).filter(Boolean);
+  const chunks = []; let cur = [];
+  words.forEach((w) => { cur.push(w); if (cur.length >= 6 || (/[.!?,;:]$/.test(w) && cur.length >= 3)) { chunks.push(cur.join(" ")); cur = []; } });
+  if (cur.length) chunks.push(cur.join(" "));
+  const total = chunks.reduce((s, c) => s + c.length + 4, 0) || 1; let at = start;
+  return chunks.map((c) => { const len = ((c.length + 4) / total) * (end - start); const o = { text: c, from: at, to: at + len }; at += len; return o; });
+}
+function spaced(g, px) { try { g.letterSpacing = px + "px"; } catch (e) {} }
+function fitFont(g, text, weight, size, family, maxW) {
+  g.font = weight + " " + size + "px " + family;
+  const w = g.measureText(text).width;
+  if (w > maxW) { size = (size * maxW) / w; g.font = weight + " " + size + "px " + family; }
+  return size;
+}
+
+function drawEndCard(g, ad, k, a) { // k = seconds since the card started, a = fade-in alpha
+  const W = g.canvas.width, H = g.canvas.height, unit = Math.min(W, H) / 100, elegant = ad.style === "elegant";
+  const c = elegant
+    ? { bg: "#fbf4e4", name: "#1b2a4e", line: "#c9a961", tag: "#a8843a", btn: "#1b2a4e", btnText: "#ffffff", family: SERIF, weight: "600" }
+    : { bg: "#141110", name: "#ffffff", line: ACCENT, tag: "rgba(255,255,255,.8)", btn: ACCENT, btnText: "#ffffff", family: SANS, weight: "800" };
+  g.globalAlpha = a; g.fillStyle = c.bg; g.fillRect(0, 0, W, H);
+  if (elegant) {
+    const glow = g.createRadialGradient(W / 2, H * 0.42, 0, W / 2, H * 0.42, Math.max(W, H) * 0.5);
+    glow.addColorStop(0, "rgba(255,255,255,.9)"); glow.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = glow; g.fillRect(0, 0, W, H);
+    g.strokeStyle = c.line; g.lineWidth = Math.max(1, unit * 0.3); g.strokeRect(unit * 4, unit * 4, W - unit * 8, H - unit * 8);
+    g.lineWidth = Math.max(1, unit * 0.12); g.strokeRect(unit * 5.2, unit * 5.2, W - unit * 10.4, H - unit * 10.4);
+  }
+  const step = (delay) => a * ease((k - delay) / 0.6);
+  g.textAlign = "center"; g.textBaseline = "alphabetic";
+
+  // brand / product name
+  const name = elegant ? ad.product.toUpperCase() : ad.product;
+  spaced(g, elegant ? unit * 0.9 : 0);
+  g.font = c.weight + " " + unit * 9 + "px " + c.family;
+  let lines = wrap(g, name, W * 0.78).slice(0, 3);
+  const size = Math.min(...lines.map((ln) => fitFont(g, ln, c.weight, unit * 9, c.family, W * 0.78)));
+  g.font = c.weight + " " + size + "px " + c.family;
+  const lh = size * 1.18, top = H * 0.43 - ((lines.length - 1) * lh) / 2;
+  g.globalAlpha = step(0.15); g.fillStyle = c.name;
+  lines.forEach((ln, j) => g.fillText(ln, W / 2, top + j * lh));
+  spaced(g, 0);
+
+  // rule
+  const ry = top + (lines.length - 1) * lh + unit * 5;
+  g.globalAlpha = step(0.35); g.fillStyle = c.line; g.fillRect(W / 2 - unit * 9, ry, unit * 18, Math.max(1, unit * 0.3));
+
+  // tagline (the ad's headline)
+  g.font = (elegant ? "italic 500 " : "600 ") + unit * (elegant ? 5.6 : 4.4) + "px " + c.family;
+  const tag = wrap(g, ad.headline, W * 0.76).slice(0, 2); const tlh = unit * 7;
+  g.globalAlpha = step(0.5); g.fillStyle = c.tag;
+  tag.forEach((ln, j) => g.fillText(ln, W / 2, ry + unit * 9 + j * tlh));
+
+  // call-to-action button
+  const label = elegant ? ad.cta.toUpperCase() : ad.cta;
+  spaced(g, elegant ? unit * 0.5 : 0);
+  g.font = (elegant ? "600 " : "800 ") + unit * (elegant ? 3.4 : 4.8) + "px " + SANS;
+  const bw = Math.min(W * 0.8, g.measureText(label).width + unit * 12), bh = unit * (elegant ? 8.6 : 11);
+  const by = ry + unit * 9 + tag.length * tlh + unit * 2;
+  g.globalAlpha = step(0.8); g.fillStyle = c.btn; roundRect(g, (W - bw) / 2, by, bw, bh, bh / 2); g.fill();
+  g.fillStyle = c.btnText; g.fillText(label, W / 2, by + bh * 0.63, bw - unit * 6);
+  spaced(g, 0); g.globalAlpha = 1;
+}
+
+function drawFrame(g, ad, t) {
+  const W = g.canvas.width, H = g.canvas.height, D = ad.duration, n = ad.scenes.length, elegant = ad.style === "elegant";
+  const body = D - endLength(ad), tt = Math.min(t, body - 0.001);
+  const sd = body / n, i = Math.min(n - 1, Math.floor(tt / sd)), local = tt - i * sd, p = local / sd;
+  const unit = Math.min(W, H) / 100;
+  g.fillStyle = "#000"; g.fillRect(0, 0, W, H);
+  const fade = i > 0 ? Math.min(1, local / (elegant ? 0.8 : 0.5)) : 1;
+  if (fade < 1) drawCover(g, ad.scenes[i - 1].el, W, H, 1, i - 1, 1);
+  drawCover(g, ad.scenes[i].el, W, H, p, i, fade);
+
+  const shade = g.createLinearGradient(0, H * 0.4, 0, H);
+  shade.addColorStop(0, "rgba(0,0,0,0)"); shade.addColorStop(1, elegant ? "rgba(20,10,0,0.7)" : "rgba(0,0,0,0.78)");
+  g.fillStyle = shade; g.fillRect(0, H * 0.4, W, H * 0.6);
+  g.textAlign = "center"; g.textBaseline = "alphabetic";
+
+  if (!elegant && i === 0) { // opening hook badge
+    const a = ease(local / 0.5) * (1 - ease((local - (sd - 0.4)) / 0.4));
+    g.font = "800 " + unit * 4 + "px " + SANS;
+    const label = ad.headline.toUpperCase(); const tw = Math.min(W * 0.86, g.measureText(label).width + unit * 6);
+    g.globalAlpha = a; g.fillStyle = ACCENT; roundRect(g, (W - tw) / 2, H * 0.08, tw, unit * 8, unit * 4); g.fill();
+    g.fillStyle = "#fff"; g.fillText(label, W / 2, H * 0.08 + unit * 5.4, tw - unit * 4); g.globalAlpha = 1;
+  }
+
+  // scene caption
+  const cap = ad.scenes[i].caption;
+  g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = unit * 2;
+  if (elegant) {
+    const ca = ease(local / 0.7) * (1 - ease((local - (sd - 0.5)) / 0.5));
+    g.font = "500 " + unit * 8.4 + "px " + SERIF;
+    const lines = wrap(g, cap, W * 0.8), lh = unit * 9.6, y0 = H * 0.68 - (lines.length - 1) * lh;
+    g.globalAlpha = ca;
+    lines.forEach((ln, k) => {
+      g.font = (k === 0 ? "500 " : "italic 500 ") + unit * 8.4 + "px " + SERIF;
+      g.fillStyle = k === 0 ? "#fff8ea" : "#f1dca6"; g.fillText(ln, W / 2, y0 + k * lh);
+    });
+  } else {
+    const ca = ease(local / 0.45);
+    g.font = "800 " + unit * 7.4 + "px " + SANS;
+    const lines = wrap(g, cap, W * 0.84), lh = unit * 9;
+    const y0 = H * 0.82 - (lines.length - 1) * lh + (1 - ca) * unit * 5;
+    g.globalAlpha = ca; g.fillStyle = "#fff";
+    lines.forEach((ln, k) => g.fillText(ln, W / 2, y0 + k * lh));
+  }
+  g.globalAlpha = 1;
+
+  // spoken-word subtitle
+  const sub = ad.subs && ad.subs.find((s) => t >= s.from && t < s.to);
+  if (sub && t < body) {
+    g.font = "500 " + unit * 3.5 + "px " + SANS; g.fillStyle = "rgba(255,255,255,.95)";
+    g.globalAlpha = Math.min(1, (t - sub.from) / 0.15, (sub.to - t) / 0.15);
+    g.fillText(sub.text, W / 2, elegant ? H * 0.77 : H * 0.91, W * 0.88); g.globalAlpha = 1;
+  }
+  g.shadowBlur = 0;
+
+  if (!elegant) {
+    g.fillStyle = "rgba(255,255,255,.25)"; g.fillRect(0, 0, W, unit * 0.8);
+    g.fillStyle = "#fff"; g.fillRect(0, 0, W * Math.min(1, t / D), unit * 0.8);
+  }
+  const k = t - (body - 0.6);
+  if (k > 0) drawEndCard(g, ad, k, ease(k / 0.8));
+}
+
+// ───────── Rendering to a video file ─────────
+function pickMime() {
+  // Prefer H.264 MP4 (accepted by ad platforms); fall back to what the browser can record.
+  const options = ["video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/mp4;codecs=avc1,mp4a.40.2", "video/mp4;codecs=avc1,opus", "video/mp4;codecs=avc1",
+    "video/mp4", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+  return options.find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || "";
+}
+async function renderAd(ad) {
+  const [W, H] = SIZES[ad.aspect] || SIZES["9:16"];
+  const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
+  const g = canvas.getContext("2d");
+  $("screen").replaceChildren(canvas);
+
+  for (let i = 0; i < ad.scenes.length; i++) {
+    const s = ad.scenes[i];
+    s.el = (s.video && (await loadVideo(s.video))) || (s.image && (await loadImage(s.image))) || placeholderScene(i, W, H);
+  }
+  const buffer = await decodeAudio(ad.audio);
+  const rate = buffer ? Math.min(1.25, Math.max(1, buffer.duration / (ad.duration - 0.4))) : 1;
+  ad.subs = buffer ? buildSubs(ad.voiceover, 0.1, Math.min(ad.duration - 0.2, buffer.duration / rate)) : null;
+  if (ad.style === "elegant" && document.fonts) {
+    try { await Promise.race([Promise.all([document.fonts.load('500 40px "Cormorant Garamond"'), document.fonts.load('italic 500 40px "Cormorant Garamond"'), document.fonts.load('600 40px "Cormorant Garamond"')]), new Promise((r) => setTimeout(r, 3000))]); } catch (e) {}
+  }
+  drawFrame(g, ad, 0);
+  if (!window.MediaRecorder || !canvas.captureStream) throw new Error("This browser cannot record video. Please use a recent Chrome, Edge, Firefox or Safari.");
+
+  const stream = canvas.captureStream(30);
+  let source = null;
+  if (buffer) {
+    const dest = audioCtx.createMediaStreamDestination();
+    source = audioCtx.createBufferSource(); source.buffer = buffer;
+    // Fit narration that runs slightly long into the ad length.
+    source.playbackRate.value = rate;
+    source.connect(dest); source.connect(audioCtx.destination);
+    dest.stream.getAudioTracks().forEach((tr) => stream.addTrack(tr));
+  }
+  const mime = pickMime();
+  const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 5000000 } : undefined);
+  const chunks = [];
+  rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+  const done = new Promise((resolve, reject) => { rec.onstop = resolve; rec.onerror = () => reject(new Error("Recording failed.")); });
+
+  rec.start(250);
+  if (source) source.start();
+  const t0 = performance.now();
+  await new Promise((resolve) => {
+    (function tick() {
+      const t = (performance.now() - t0) / 1000;
+      syncClips(ad, t);
+      drawFrame(g, ad, Math.min(t, ad.duration - 0.001));
+      setProgress(t / ad.duration);
+      if (t >= ad.duration) resolve(); else requestAnimationFrame(tick);
+    })();
+  });
+  rec.stop(); await done;
+  if (source) { try { source.stop(); } catch (e) {} }
+  stream.getTracks().forEach((tr) => tr.stop());
+  ad.scenes.forEach((s) => { if (s.el && s.el.pause) { s.el.pause(); URL.revokeObjectURL(s.el.src); } });
+  const type = (rec.mimeType || mime || "video/webm").split(";")[0];
+  return { blob: new Blob(chunks, { type }), ext: type.includes("mp4") ? "mp4" : "webm" };
+}
+
+function showResult(ad, out) {
+  if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+  lastBlobUrl = URL.createObjectURL(out.blob);
+  const v = document.createElement("video"); v.controls = true; v.playsInline = true; v.loop = true; v.src = lastBlobUrl;
+  $("screen").replaceChildren(v);
+  const slug = ad.product.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "ad";
+  const a = $("download"); a.href = lastBlobUrl; a.download = slug + "-" + ad.duration + "s." + out.ext;
+  a.textContent = "Download video (." + out.ext + ", " + (out.blob.size / 1048576).toFixed(1) + " MB)"; a.style.display = "block";
+  const dl = $("script"); dl.replaceChildren();
+  const add = (k, val) => { if (!val) return; const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = val; dl.append(dt, dd); };
+  add("Headline", ad.headline); add("Voiceover", ad.voiceover);
+  add("Captions", ad.scenes.map((s) => s.caption).join(" / ")); add("Call to action", ad.cta);
+  dl.style.display = "block";
+}
+
+// ───────── Wiring ─────────
+$("adForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = {
+    email: $("email").value.trim(), product: $("product").value.trim(), description: $("description").value.trim(),
+    intention: $("intention").value.trim(), audience: $("audience").value.trim(), tone: $("tone").value,
+    duration: Number($("duration").value), aspect: $("aspect").value, style: $("style").value,
+    code: $("code").value.trim(),
+  };
+  if (hookUrl() && !input.code) return setStatus("Please enter your invite code.", "err");
+  store.set("vrisama.code", input.code);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.email)) return setStatus("Please enter a valid email address.", "err");
+  if (!input.product || !input.intention) return setStatus("Product name and the goal of the ad are required.", "err");
+
+  // Audio must be unlocked inside the click, before any waiting.
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch (err) { audioCtx = null; }
+
+  const btn = $("go"); btn.disabled = true; btn.textContent = "Working...";
+  $("download").style.display = "none"; $("script").style.display = "none"; setProgress(null);
+  try {
+    setStatus("Building demo ad...");
+    const ad = await requestAd(input, setStatus);
+    ad.style = input.style;
+    setStatus("Rendering your " + ad.duration + "-second video. Keep this tab open and visible..."); setProgress(0);
+    const out = await renderAd(ad);
+    showResult(ad, out);
+    if (ad.missingClips) setStatus("Your ad is ready, but " + ad.missingClips + " video clip(s) could not be created and still images were used instead. " + (ad.clipError || ""), "err");
+    else setStatus("Your ad is ready.", "ok");
+  } catch (err) {
+    setStatus(err.message || "Something went wrong.", "err");
+  } finally {
+    setProgress(null); btn.disabled = false; btn.textContent = "Create video ad";
+  }
+});
+
+$("openSettings").addEventListener("click", () => { $("hook").value = store.get("adspark.webhook") || ""; $("settings").showModal(); });
+$("cancelSettings").addEventListener("click", () => $("settings").close());
+$("saveSettings").addEventListener("click", () => { store.set("adspark.webhook", $("hook").value.trim()); $("settings").close(); refreshMode(); });
+if (N8N_WEBHOOK_URL) $("openSettings").style.display = "none";
+
+$("code").value = store.get("vrisama.code") || "";
+try { const u = JSON.parse(store.get("adspark.usage")); if (u && u.month === new Date().toISOString().slice(0, 7)) showUsage(u); } catch (e) {}
+refreshMode();
+</script>
+</body>
+</html>
